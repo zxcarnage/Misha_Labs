@@ -1,0 +1,5 @@
+﻿  HRManagment.cpp
+  Source.cpp
+  Создание кода...
+D:\OOP\ALL_LABS\MLabs\MLabs\Source.cpp(30): warning C4715: ReturnHire: значение возвращается не при всех путях выполнения
+  MLabs.vcxproj -> D:\OOP\ALL_LABS\MLabs\x64\Debug\Lab1.exe
