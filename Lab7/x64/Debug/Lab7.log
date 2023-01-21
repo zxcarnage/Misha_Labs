@@ -1,0 +1,5 @@
+﻿  Delivery.cpp
+D:\OOP\ALL_LABS\MLabs\Lab7\Delivery.cpp(72,125): warning C4267: аргумент: преобразование из "size_t" в "int"; возможна потеря данных
+D:\OOP\ALL_LABS\MLabs\Lab7\Delivery.cpp(91,137): warning C4267: аргумент: преобразование из "size_t" в "int"; возможна потеря данных
+D:\OOP\ALL_LABS\MLabs\Lab7\Delivery.cpp(22): warning C4715: Customer::GetObject: значение возвращается не при всех путях выполнения
+  Lab7.vcxproj -> D:\OOP\ALL_LABS\MLabs\x64\Debug\Lab7.exe

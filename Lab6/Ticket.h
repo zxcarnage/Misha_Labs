@@ -13,7 +13,7 @@ enum class Country
 	Germany
 };
 
-class Person
+class Customer
 {
 	string _name;
 	float _age;
@@ -26,7 +26,7 @@ public:
 class Ticket
 {
 protected:
-	Person Customer;
+	Customer Customer;
 	string Date;
 };
 

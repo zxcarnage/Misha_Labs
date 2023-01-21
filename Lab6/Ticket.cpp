@@ -12,7 +12,7 @@ void InputEnum(Country& country)
 	country = Country((int)answer - 1);
 }
 
-void Person::Create()
+void Customer::Create()
 {
 	StringInput(&_name, " имя");
 	Input(&_age, " возраст", Age);
@@ -77,12 +77,12 @@ string Airticket::GetDepature()
 	return EnumToString(_depature);
 }
 
-string Person::GetName()
+string Customer::GetName()
 {
 	return _name;
 }
 
-float Person::GetAge()
+float Customer::GetAge()
 {
 	return _age;
 }
