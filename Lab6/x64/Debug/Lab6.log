@@ -1,0 +1,4 @@
+﻿  Panel.cpp
+D:\OOP\ALL_LABS\MLabs\Lab6\Panel.cpp(48,74): warning C4267: аргумент: преобразование из "size_t" в "int"; возможна потеря данных
+D:\OOP\ALL_LABS\MLabs\Lab6\Panel.cpp(64,74): warning C4267: аргумент: преобразование из "size_t" в "int"; возможна потеря данных
+  Lab6.vcxproj -> D:\OOP\ALL_LABS\MLabs\x64\Debug\Lab6.exe
