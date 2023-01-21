@@ -1,2 +1,5 @@
-﻿  Hospital.cpp
-  Lab3.vcxproj -> D:\OOP\ALL_LABS\MLabs\x64\Debug\Lab3.exe
+﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(517,5): warning MSB8028: промежуточный каталог (x64\Debug\) содержит файлы, которые используются совместно с другим проектом (Lab3.vcxproj).  Это может привести к ошибкам очистки и перестроения.
+  Hospital.cpp
+D:\OOP\ALL_LABS\MLabs\Lab3\Hospital.cpp(205,72): warning C4267: аргумент: преобразование из "size_t" в "int"; возможна потеря данных
+D:\OOP\ALL_LABS\MLabs\Lab3\Hospital.cpp(237,72): warning C4267: аргумент: преобразование из "size_t" в "int"; возможна потеря данных
+  Lab3.vcxproj -> D:\OOP\ALL_LABS\MLabs\x64\Debug\Lab3_4_5.exe

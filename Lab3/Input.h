@@ -15,7 +15,8 @@ enum InputType
 	Number,
 	IntNumber,
 	Age,
-	Answer
+	Answer,
+	IndexNumber
 };
 
 class InputException : public exception

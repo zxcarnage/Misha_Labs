@@ -19,6 +19,12 @@ void IntNumberInput(float tempData, string dataName)
 		throw InputException("Неверные данные, попробуйте целое число", tempData);
 }
 
+void IndexNumberInput(float tempData, int ceilNum = 0)
+{
+	if ((int)tempData != tempData || tempData < 0 || (ceilNum > 0 && tempData > ceilNum))
+		throw new exception("Неверный индекс/айди, попробуйте ввести в пределах предложенного");
+}
+
 void AnswerInput(float tempData, string dataName, int ceilNum = 0)
 {
 	if ((int)tempData != tempData || (int)tempData > ceilNum)
@@ -220,6 +226,10 @@ void InputMenu(float* data, string dataName, InputType inputType, int ceilNum)
 		break;
 	case IntNumber:
 		IntNumberInput(tempData, dataName);
+		*data = tempData;
+		break;
+	case IndexNumber:
+		IndexNumberInput(tempData, ceilNum);
 		*data = tempData;
 		break;
 	case Age:

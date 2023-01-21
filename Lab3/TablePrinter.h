@@ -8,7 +8,7 @@
 using std::ostream;
 using std::string;
 using std::vector;
-
+using std::ios;
 
 class TablePrinter
 {

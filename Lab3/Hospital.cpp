@@ -1,5 +1,14 @@
 #include "Hospital.h"
 
+istream& operator >>(istream& stream, Hospital& hospital) {
+	hospital.Create();
+	return stream;
+}
+ostream& operator <<(ostream& stream, Hospital& hospital) {
+	hospital.Show();
+	return stream;
+}
+
 string FrameworkToString(Framework framework)
 {
 	switch (framework)
@@ -62,6 +71,11 @@ void Doctor::Create()
 	_sex = InputSex();
 }
 
+char* Doctor::GetName()
+{
+	return Name;
+}
+
 void Doctor::Show(TablePrinter tp)
 {
 	tp << Name << Age << FrameworkToString(framework) << SexToString(_sex);
@@ -113,12 +127,16 @@ void Hospital::Create()
 	Input(&_maxPayment, " максимальную платежку", InputType::Number);
 }
 
-void Hospital::Show()
+void Hospital::Show(TablePrinter tp, int hospitalIndex)
 {
 	if (_maxPatients == 0)
 		return;
 	int index = 0;
-	TablePrinter tp(&cout);
+	tp.AddColumn("ID", 4);
+	tp.PrintHeader();
+	tp << hospitalIndex;
+	tp.PrintFooter();
+	tp = TablePrinter(&cout);
 	tp.AddColumn("Имя", 20);
 	tp.AddColumn("Возраст", 9);
 	tp.AddColumn("Отделение", 15);
@@ -137,4 +155,236 @@ void Hospital::Show()
 	tp.PrintHeader();
 	tp << _maxPatients << _maxEmployees << _maxPayment;
 	tp.PrintFooter();
+}
+
+void WriteVectorInFile(vector <Hospital> hospitals)
+{
+	ofstream fout;
+	fout.open("dataBase.txt", ofstream::binary | ofstream::app);
+	if (!fout.good() || fout.fail())
+		return;
+	for (int i = 0; i < hospitals.size(); i++)
+	{
+		hospitals.at(i).Write();
+	}
+	if (!fout.eof())
+		return;
+	fout.close();
+}
+
+void Hospital::Write()
+{
+	ofstream fout;
+	fout.open("dataBase.txt", ofstream::app | ofstream::binary);
+	fout.write((char*)this, sizeof(Hospital));
+	fout.close();
+}
+
+float Hospital::GetPrice()
+{
+	return _maxPayment;
+}
+
+float Hospital::GetEmployees()
+{
+	return _maxEmployees;
+}
+
+float Hospital::GetPatients()
+{
+	return _maxPatients;
+}
+
+void Hospital::EditFile()
+{
+	float answer;
+	vector<Hospital> hospitals;
+	hospitals = ShowFile();
+	cout.setf(ios::boolalpha | ios::hex | ios::showbase);
+	cout << "Под каким номером больницу вы хотите редактировать?" << endl;
+	Input(&answer, " ответ", InputType::IndexNumber, hospitals.size());
+	hospitals.at((int)answer - 1).Create();
+	ofstream("dataBase.txt");
+	WriteVectorInFile(hospitals);
+}
+
+vector<Hospital> Hospital::ShowFile()
+{
+	int index = 1;
+	ifstream fin;
+	Hospital hospital;
+	vector <Hospital> hospitals;
+	TablePrinter tp(&cout);
+	fin.open("dataBase.txt", ifstream::binary);
+	if (!fin.is_open() || fin.bad())
+		cout << "Что-то пошло не так" << endl;
+	while (fin.read((char*)&hospital, sizeof(Hospital)))
+	{
+		hospitals.push_back(hospital);
+		hospital.Show(tp, index);
+		index++;
+	}
+	fin.close();
+	return hospitals;
+}
+
+void Hospital::DeleteFile()
+{
+	float answer;
+	vector<Hospital> hospitals;
+	hospitals = ShowFile();
+	cout << "Под каким номером больницу вы хотите удалить?" << endl;
+	Input(&answer, " ответ", InputType::IndexNumber, hospitals.size());
+	hospitals.erase(hospitals.begin() + (int)answer - 1);
+	ofstream("dataBase.txt");
+	WriteVectorInFile(hospitals);
+}
+
+bool Hospital::ContainsDoctor(string name)
+{
+	int index = 0;
+	while (_doctors[index].GetFramework() != Framework::Empty)
+		if (_doctors[index].GetName() == name)
+			return true;
+
+	return false;
+}
+
+vector<Hospital> SearchName()
+{
+	string name;
+	ifstream fin;
+	Hospital hospital;
+	vector<Hospital> findedHospitals;
+	fin.open("dataBase.txt");
+	StringInput(&name, " имя доктора");
+	while (fin.read((char*)&hospital, sizeof(Hospital)))
+	{
+		if (hospital.ContainsDoctor(name))
+			findedHospitals.push_back(hospital);
+	}
+	return findedHospitals;
+}
+
+vector<Hospital> SearchPrice()
+{
+	float price;
+	ifstream fin;
+	Hospital hospital;
+	vector<Hospital> findedHospitals;
+	fin.open("dataBase.txt");
+	Input(&price, " верхнюю грань цены", InputType::Number);
+	while (fin.read((char*)&hospital, sizeof(Hospital)))
+	{
+		if (hospital.GetPrice() < price)
+			findedHospitals.push_back(hospital);
+	}
+	return findedHospitals;
+}
+
+void CallCurrentSearch(int answer)
+{
+	vector<Hospital> hospitals;
+	switch (answer)
+	{
+	case 1:
+		hospitals = SearchName();
+		break;
+	case 2:
+		hospitals = SearchPrice();
+		break;
+	}
+	for (int i = 0; i < hospitals.size(); i++)
+	{
+		hospitals.at(i).Show();
+	}
+}
+
+void ShowSearch()
+{
+	float answer;
+	cout << "По каким признакам вы хотите искать?" << endl;
+	cout << "1.Все где есть доктор с именем..." << endl;
+	cout << "2.Все где плата меньше чем..." << endl;
+	Input(&answer, " ответ", InputType::Answer, 2);
+	CallCurrentSearch((int)answer);
+}
+
+void Hospital::Search()
+{
+	ShowSearch();
+}
+
+bool EmployeesPredicate(Hospital& first, Hospital& second)
+{
+	return first.GetEmployees() < second.GetEmployees();
+}
+
+bool PatientPredicate(Hospital& first, Hospital& second)
+{
+	return first.GetPatients() < second.GetPatients();
+}
+
+bool PaymentPredicate(Hospital& first, Hospital& second)
+{
+	return first.GetPrice() < second.GetPrice();
+}
+
+void SortEmployees(vector<Hospital>* sortedHospitals)
+{
+	sort((*sortedHospitals).begin(), (*sortedHospitals).end(), EmployeesPredicate);
+}
+
+void SortPatients(vector<Hospital>* sortedHospitals)
+{
+	sort((*sortedHospitals).begin(), (*sortedHospitals).end(), PatientPredicate);
+}
+
+void SortPayment(vector<Hospital>* sortedHospitals)
+{
+	sort((*sortedHospitals).begin(), (*sortedHospitals).end(), PaymentPredicate);
+}
+
+void CallCurrentSort(int answer)
+{
+	Hospital hospital;
+	ofstream fout;
+	cout << "Предыдущее содержание " << endl;
+	vector<Hospital> sortedHospitals = Hospital::ShowFile();
+	ofstream("dataBase.txt");
+	fout.open("dataBase.txt", ofstream::binary | ofstream::app);
+	switch (answer)
+	{
+	case 1:
+		SortEmployees(&sortedHospitals);
+		break;
+	case 2:
+		SortPatients(&sortedHospitals);
+		break;
+	case 3:
+		SortPayment(&sortedHospitals);
+		break;
+	}
+	for (int i = 0; i < sortedHospitals.size(); i++)
+	{
+		fout.write((char*)&sortedHospitals.at(i), sizeof(Hospital));
+	}
+	cout << "Отсортировано!" << endl;
+	fout.close();
+}
+
+void ShowSort()
+{
+	float answer;
+	cout << "По каким признакам вы хотите сортировать?" << endl;
+	cout << "1.По максимальному количеству состава" << endl;
+	cout << "2.По максимальному количеству пациентов" << endl;
+	cout << "3.По максимальному платежу" << endl;
+	Input(&answer, " ответ", InputType::Answer, 3);
+	CallCurrentSort((int)answer);
+}
+
+void Hospital::SortFile()
+{
+	ShowSort();
 }
